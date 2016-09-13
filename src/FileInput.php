@@ -62,6 +62,10 @@ class FileInput extends InputWidget
      * Web page for possible events.
      */
     public $clientEvents = [];
+    /**
+     * @var URL to uploaded image.
+     */
+    public $image;
 
     /**
      * Initializes the widget.
@@ -73,7 +77,7 @@ class FileInput extends InputWidget
         }
 
         if (!in_array($this->style, [self::STYLE_INPUT, self::STYLE_BUTTON, self::STYLE_IMAGE, self::STYLE_CUSTOM], true)) {
-            throw new InvalidConfigException('Unrecognized "FileInput::$style" format. It should be of "FileInput::STYLE_INPUT", "FileInput::STYLE_BUTTON", "FileInput::STYLE_IMAGE" or "FileInput::STYLE_CUSTOM" only.');
+            throw new InvalidConfigException('Unrecognized "FileInput::$style" format. It should be of "FileInput::STYLE_INPUT", "FileInput::STYLE_BUTTON", "FileInput::STYLE_IMAGE", or "FileInput::STYLE_CUSTOM" only.');
         }
 
         if ($this->style === self::STYLE_CUSTOM && $this->customView === null) {
@@ -111,8 +115,16 @@ class FileInput extends InputWidget
         $params = ['field' => $field];
         switch ($this->style) {
             case self::STYLE_INPUT:
-                $view = $this->getViewPath() . '/inputField.php';
-                break;
+              if($this->image) {
+                $params["image"]= $this->image;
+                $params["name"]= $this->attribute;
+                $view= $this->getViewPath() . '/updateField.php';
+              }
+              else {
+                $params["name"]= $this->attribute;
+                $view= $this->getViewPath() . '/inputField.php';
+              }
+              break;
             case self::STYLE_BUTTON:
                 $view = $this->getViewPath() . '/buttonField.php';
                 break;
